@@ -4713,6 +4713,8 @@ static void chdirToAppBundle(const char *argv0)
 
 bool ALTraceApp::OnInit()
 {
+    SetAppName(wxT("alTrace"));
+
     appstringcache = stringcache_create();
 
     #ifdef __APPLE__
