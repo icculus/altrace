@@ -4693,11 +4693,30 @@ static void loadOpenAL()
     }
 }
 
+#ifdef __APPLE__
+static void chdirToAppBundle(const char *argv0)
+{
+    // !!! FIXME: big hack.
+    const bool likelyAppLaunch = strstr(argv0, ".app/Contents/MacOS/") != NULL;
+    if (!likelyAppLaunch) { return; }
+    char *cpy = strdup(argv0);
+    if (cpy) {
+        char *ptr = strrchr(cpy, '/');
+        if (ptr) {
+            *ptr = '\0';
+            chdir(cpy); // this might fail, oh well.
+        }
+        free(cpy);
+    }
+}
+#endif
+
 bool ALTraceApp::OnInit()
 {
     appstringcache = stringcache_create();
 
     #ifdef __APPLE__
+    chdirToAppBundle(argv[0]);
     wxApp::SetExitOnFrameDelete(false);
     wxMenuBar *menuBar = new wxMenuBar;
     wxMenu *menuFile = new wxMenu(wxMENU_TEAROFF);

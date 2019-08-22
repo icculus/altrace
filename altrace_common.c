@@ -116,7 +116,31 @@ int load_real_openal(void)
 
     realdll = dlopen(dllname, RTLD_NOW | RTLD_LOCAL);
     if (!realdll) {
-        fprintf(stderr, "%s: Failed to load real OpenAL: %s\n", GAppName, dlerror());
+        fprintf(stderr, "%s: Failed to load %s: %s\n", GAppName, dllname, dlerror());
+        fflush(stderr);
+    }
+
+    if (!realdll) {
+        // Not in the libpath? See if we can find it in the cwd.
+        char *cwd = getcwd(NULL, 0);
+        if (cwd) {
+            const size_t fulllen = strlen(cwd) + strlen(dllname) + 2;
+            char *fullpath = (char *) malloc(fulllen);
+            if (fullpath) {
+                snprintf(fullpath, fulllen, "%s/%s", cwd, dllname);
+                realdll = dlopen(dllname, RTLD_NOW | RTLD_LOCAL);
+                if (!realdll) {
+                    fprintf(stderr, "%s: Failed to load %s: %s\n", GAppName, fullpath, dlerror());
+                    fflush(stderr);
+                }
+                free(fullpath);
+            }
+            free(cwd);
+        }
+    }
+
+    if (!realdll) {
+        fprintf(stderr, "%s: Couldn't load OpenAL from anywhere obvious. Giving up.\n", GAppName);
         fflush(stderr);
         return 0;
     }
