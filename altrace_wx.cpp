@@ -4627,7 +4627,7 @@ void ALTraceApp::MacNewFile()
         openAtLaunch = wxT("");
         return;
     }
-    chooseNewFileAndOpen();
+    //chooseNewFileAndOpen();
 }
 #endif
 
