@@ -1,0 +1,8 @@
+syntax:glob
+cmake-build
+.DS_Store
+libopenal.1.dylib
+libopenal.so.1
+OpenAL32.dll
+
+
