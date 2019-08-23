@@ -244,11 +244,14 @@ static void IO_ENTRYINFO(CallerInfo *callerinfo)
 #define IO_END() } }
 
 
-static int init_altrace_playback(const char *filename)
+static int init_altrace_playback(const char *filename, void *userdata)
 {
     int okay = 1;
 
     io_failure = 0;
+    next_mapped_threadid = 0;
+    trace_scope = 0;
+    guserdata = userdata;
 
     logfd = open(filename, O_RDONLY);
     if (logfd == -1) {
@@ -280,6 +283,10 @@ static void quit_altrace_playback(void)
     const int io = logfd;
 
     logfd = -1;
+    io_failure = 0;
+    next_mapped_threadid = 0;
+    trace_scope = 0;
+    guserdata = NULL;
 
     fflush(stdout);
 
@@ -1935,7 +1942,7 @@ int process_tracelog(const char *fname, void *userdata)
     off_t fdoffset = 0;
     off_t fdsize = 0;
 
-    if (!init_altrace_playback(fname)) {
+    if (!init_altrace_playback(fname, userdata)) {
         return 0;
     }
 
@@ -1945,9 +1952,6 @@ int process_tracelog(const char *fname, void *userdata)
         fprintf(stderr, "%s: Failed to seek in file: %s\n", GAppName, strerror(errno));
         io_failure = 1;
     }
-
-    guserdata = userdata;
-    trace_scope = 0;
 
     while (!eos) {
         if (!io_failure) {
@@ -2050,7 +2054,6 @@ int process_tracelog(const char *fname, void *userdata)
         }
     }
 
-    guserdata = NULL;
     quit_altrace_playback();
 
     return retval;
