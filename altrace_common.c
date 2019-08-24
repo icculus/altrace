@@ -64,27 +64,55 @@ char *sprintf_alloc(const char *fmt, ...)
     return retval;
 }
 
-static struct timespec starttime;
+
+static uint64 starttime = 0;
+
 uint32 now(void)
 {
+#ifdef __APPLE__
+    if (clock_gettime == NULL) {  // not available until 10.12, use gettimeofday if necessary.
+        struct timeval tv;
+        if (gettimeofday(&tv, NULL) == -1) {
+            fprintf(stderr, "%s: Failed to get current clock time: %s\n", GAppName, strerror(errno));
+            return 0;
+        }
+        return (uint32) ( ( (((uint64) tv.tv_sec) * 1000) + (((uint64) tv.tv_usec) / 1000) ) - starttime );
+    }
+#endif
+
     struct timespec ts;
     if (clock_gettime(CLOCK_MONOTONIC_RAW, &ts) == -1) {
         fprintf(stderr, "%s: Failed to get current clock time: %s\n", GAppName, strerror(errno));
         return 0;
     }
 
-    return (uint32)
-        ( ( (((uint64) ts.tv_sec) * 1000) + (((uint64) ts.tv_nsec) / 1000000) ) -
-          ( (((uint64) starttime.tv_sec) * 1000) + (((uint64) starttime.tv_nsec) / 1000000) ) );
+    return (uint32) ( ( (((uint64) ts.tv_sec) * 1000) + (((uint64) ts.tv_nsec) / 1000000) ) - starttime );
 }
 
 int init_clock(void)
 {
-    if (clock_gettime(CLOCK_MONOTONIC_RAW, &starttime) == -1) {
+#ifdef __APPLE__
+    if (clock_gettime == NULL) {  // not available until 10.12, use gettimeofday if necessary.
+        struct timeval tv;
+        if (gettimeofday(&tv, NULL) == -1) {
+            fprintf(stderr, "%s: Failed to get current clock time: %s\n", GAppName, strerror(errno));
+            return 0;
+        }
+        usleep(1000);  // just so now() is (hopefully) never 0
+        starttime = (((uint64) tv.tv_sec) * 1000) + (((uint64) tv.tv_usec) / 1000);
+        return 1;
+    }
+#endif
+
+    struct timespec ts;
+    if (clock_gettime(CLOCK_MONOTONIC_RAW, &ts) == -1) {
         fprintf(stderr, "%s: Failed to get current clock time: %s\n", GAppName, strerror(errno));
         return 0;
     }
     usleep(1000);  // just so now() is (hopefully) never 0
+
+    starttime = (((uint64) ts.tv_sec) * 1000) + (((uint64) ts.tv_nsec) / 1000000);
+
     return 1;
 }
 
