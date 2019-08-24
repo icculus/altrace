@@ -14,6 +14,7 @@ add_library(altrace_record SHARED
     altrace_common.c
 )
 target_link_libraries(altrace_record dl)
+install(TARGETS altrace_record)
 
 add_executable(altrace_cli
     altrace_cli.c
@@ -21,6 +22,7 @@ add_executable(altrace_cli
     altrace_common.c
 )
 target_link_libraries(altrace_cli dl)
+install(TARGETS altrace_cli)
 
 option(ALTRACE_WX "Build wxWidgets-based GUI" TRUE)
 if(ALTRACE_WX)
@@ -40,6 +42,7 @@ if(ALTRACE_WX)
         )
         include(${wxWidgets_USE_FILE})
         target_link_libraries(altrace_wx "dl;${wxWidgets_LIBRARIES}")
+        install(TARGETS altrace_wx)
     else()
         MESSAGE(STATUS "wxWidgets not found. GUI support is disabled.")
     endif()
