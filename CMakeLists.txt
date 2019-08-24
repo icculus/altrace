@@ -26,7 +26,7 @@ install(TARGETS altrace_cli)
 
 option(ALTRACE_WX "Build wxWidgets-based GUI" TRUE)
 if(ALTRACE_WX)
-    set(wxWidgets_USE_LIBS base core adv)
+    set(wxWidgets_USE_LIBS base core adv html)
     set(wxWidgets_INCLUDE_DIRS_NO_SYSTEM 1)
     find_package(wxWidgets)
     if(wxWidgets_FOUND)
