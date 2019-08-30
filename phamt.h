@@ -1,4 +1,12 @@
 /**
+ * alTrace; a debugging tool for OpenAL.
+ *
+ * Please see the file LICENSE.txt in the source's root directory.
+ *
+ *  This file written by Ryan C. Gordon.
+ */
+
+/**
  *  \file phamt.h
  *  \author Ryan C. Gordon.
  *  \brief Templated Persistent Hash-Array-Mapped Trie 
