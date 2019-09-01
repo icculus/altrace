@@ -1328,12 +1328,42 @@ static void run_alGetSource3f(CallerInfo *callerinfo, ALuint name, ALenum param,
 
 static void run_alGetSourceiv(CallerInfo *callerinfo, ALuint name, ALenum param, ALboolean isenum, ALint *origvalues, uint32 numvals, ALint *values)
 {
-    REAL_alGetSourceiv(get_mapped_source(name), param, values);
+    const ALuint src = get_mapped_source(name);
+
+    // in case we're running a little ahead of the AL, if this is a
+    //  AL_BUFFERS_PROCESSED query, wait until at least as many as expected
+    //  are available.
+    if (param == AL_BUFFERS_PROCESSED) {
+        const ALint expected = *values;
+        REAL_alGetSourceiv(src, AL_BUFFERS_PROCESSED, values);
+        while (*values < expected) {
+            usleep(1000);
+            REAL_alGetSourceiv(src, AL_BUFFERS_PROCESSED, values);
+        }
+        return;
+    }
+
+    REAL_alGetSourceiv(src, param, values);
 }
 
 static void run_alGetSourcei(CallerInfo *callerinfo, ALuint name, ALenum param, ALboolean isenum, ALint *origvalue, ALint value)
 {
-    REAL_alGetSourcei(get_mapped_source(name), param, &value);
+    const ALuint src = get_mapped_source(name);
+
+    // in case we're running a little ahead of the AL, if this is a
+    //  AL_BUFFERS_PROCESSED query, wait until at least as many as expected
+    //  are available.
+    if (param == AL_BUFFERS_PROCESSED) {
+        const ALint expected = value;
+        REAL_alGetSourcei(src, AL_BUFFERS_PROCESSED, &value);
+        while (value < expected) {
+            usleep(1000);
+            REAL_alGetSourcei(src, AL_BUFFERS_PROCESSED, &value);
+        }
+        return;
+    }
+
+    REAL_alGetSourcei(src, param, &value);
 }
 
 static void run_alGetSource3i(CallerInfo *callerinfo, ALuint name, ALenum param, ALint *origvalue1, ALint *origvalue2, ALint *origvalue3, ALint value1, ALint value2, ALint value3)
