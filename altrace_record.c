@@ -14,6 +14,12 @@ const char *GAppName = "altrace_record";
 #ifdef _MSC_VER
   #define AL_API __declspec(dllexport)
   #define ALC_API __declspec(dllexport)
+#elif defined(__GNUC__) || defined(__clang__)
+  #define AL_API __attribute__((visibility("default")))
+  #define ALC_API __attribute__((visibility("default")))
+#elif defined(__GNUC__) || defined(__clang__)
+  #define AL_API extern
+  #define ALC_API extern
 #endif
 
 #include "altrace_common.h"

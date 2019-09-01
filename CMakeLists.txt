@@ -13,6 +13,7 @@ add_library(altrace_record SHARED
     altrace_record.c
     altrace_common.c
 )
+set_target_properties(altrace_record PROPERTIES C_VISIBILITY_PRESET hidden)
 target_link_libraries(altrace_record dl)
 install(TARGETS altrace_record LIBRARY DESTINATION lib)
 
