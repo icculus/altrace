@@ -1963,7 +1963,6 @@ int process_tracelog(const char *fname, void *userdata)
         }
 
         if (io_failure) {
-            visit_eos(guserdata, AL_FALSE, 0);
             retval = 0;
             eos = 1;
             break;
@@ -2047,11 +2046,17 @@ int process_tracelog(const char *fname, void *userdata)
                 break;
 
             default:
-                visit_eos(guserdata, AL_FALSE, 0);
+                if (!io_failure) {
+                    visit_eos(guserdata, AL_FALSE, 0);
+                }
                 retval = 0;
                 eos = 1;
                 break;
         }
+    }
+
+    if (io_failure) {
+        visit_eos(guserdata, AL_FALSE, 0);
     }
 
     quit_altrace_playback();
