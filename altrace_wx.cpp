@@ -561,16 +561,9 @@ void ALTraceAudioPlayerCtrl::onIdle(wxIdleEvent &event)
         lastdrawpos = newdrawpos;
     }
 
-    // !!! FIXME (at least on wxCocoa) this is generating wxPaintEvents which
-    // !!! FIXME:  causes a second redraw.  :/
-    if (backing) {
-        wxClientDC dc(this);
-        dc.DrawBitmap(*backing, 0, 0);   // !!! FIXME: just overwrite the piece that is changing.
-        if (lastdrawpos < w) {
-            dc.SetPen(*wxYELLOW_PEN);
-            dc.DrawLine(lastdrawpos, 0, lastdrawpos, h);
-        }
-    }
+    // !!! FIXME: just overwrite the piece that is changing.
+    Refresh();
+    Update();
 }
 
 // !!! FIXME: this is a hack for now.
