@@ -1568,7 +1568,7 @@ void ALTraceCallInfoPage::updateCallInfoPage(const ApiCallInfo *info)
 
     if (info->inefficient_state_change) {
         html << wxT("<p><h1>Inefficient call</h1></p><p><font size='+1'><ul>");
-        html << wxT("<li>This call was ineffiencient or unnecessary. Often this means you tried to set a");
+        html << wxT("<li>This call was inefficient or unnecessary. Often this means you tried to set a");
         html << wxT(" state to its current value, or you're calling alGetError() when nothing went wrong.");
         html << wxT(" Sometimes this is beyond your control, but often you can reduce or remove these calls");
         html << wxT(" that are doing useless work.");
