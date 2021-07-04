@@ -1,4 +1,4 @@
-syntax:glob
+
 cmake-build
 .DS_Store
 libopenal.1.dylib
