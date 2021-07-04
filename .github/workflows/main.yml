@@ -17,7 +17,7 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install cmake ninja-build libwxgtk3.0-dev libopenal-dev
+        sudo apt-get install cmake ninja-build libwxgtk3.0-gtk3 libopenal-dev
     - name: Get alTrace sources
       uses: actions/checkout@v2
     - name: Configure CMake
