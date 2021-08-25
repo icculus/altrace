@@ -62,7 +62,7 @@ void out_of_memory(void)
 static inline uint32 hashCStringXorDJB(const char *str)
 {
     size_t len = strlen(str);
-    register uint32 hash = 5381;
+    uint32 hash = 5381;
     while (len--)
         hash = ((hash << 5) + hash) ^ *(str++);
     return hash;
